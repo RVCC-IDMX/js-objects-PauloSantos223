@@ -62,7 +62,20 @@
  * then use the copied object like a lookup table
  */
 function getColorValue(color) {
-  // write your code here & return value
+  const colorCodes = {
+    black: 0,
+    brown: 1,
+    red: 2,
+    orange: 3,
+    yellow: 4,
+    green: 5,
+    blue: 6,
+    violet: 7,
+    grey: 8,
+    white: 9,
+  };
+
+  return colorCodes[color.toLowerCase()] || -1;
 }
 
 /**
@@ -79,7 +92,22 @@ function getColorValue(color) {
  * then use the copied object like a lookup table
  */
 function getMultiplierValue(color) {
-  // write your code here & return value
+  const multiplierCodes = {
+    black: 1,
+    brown: 10,
+    red: 100,
+    orange: 1000,
+    yellow: 10000,
+    green: 100000,
+    blue: 1000000,
+    violet: 10000000,
+    grey: 100000000,
+    white: 1000000000,
+    gold: 0.1,
+    silver: 0.01,
+  };
+
+  return multiplierCodes[color.toLowerCase()] || -1;
 }
 
 /**
@@ -106,7 +134,47 @@ function getMultiplierValue(color) {
  *
  */
 function getThreeBandValue(bands) {
-  // write your code here & return value
+  const colorCodes = {
+    black: 0,
+    brown: 1,
+    red: 2,
+    orange: 3,
+    yellow: 4,
+    green: 5,
+    blue: 6,
+    violet: 7,
+    grey: 8,
+    white: 9,
+  };
+
+  const multiplierCodes = {
+    black: 1,
+    brown: 10,
+    red: 100,
+    orange: 1000,
+    yellow: 10000,
+    green: 100000,
+    blue: 1000000,
+    violet: 10000000,
+    grey: 100000000,
+    white: 1000000000,
+    gold: 0.1,
+    silver: 0.01,
+  };
+
+  const digit1 = colorCodes[bands.color1.toLowerCase()] || 0;
+  const digit2 = colorCodes[bands.color2.toLowerCase()] || 0;
+  const multiplier = multiplierCodes[bands.multiplier.toLowerCase()] || 1;
+
+  let result = (digit1 * 10 + digit2) * multiplier;
+
+  if (bands.multiplier.toLowerCase() === 'gold') {
+    result = Math.floor(result * 10) / 10;
+  } else if (bands.multiplier.toLowerCase() === 'silver') {
+    result = Math.floor(result * 100) / 100;
+  }
+
+  return result;
 }
 
 /**
@@ -131,7 +199,22 @@ function getThreeBandValue(bands) {
  *
  */
 function formatNumber(val) {
-  // write your code here & return value
+  const absVal = Math.abs(val);
+
+  const metricNotations = {
+    G: 1000000000,
+    M: 1000000,
+    k: 1000,
+  };
+  // eslint-disable-next-line max-len, no-shadow
+  const notation = Object.keys(metricNotations).find((notation) => absVal >= metricNotations[notation]);
+
+  if (notation) {
+    const formattedValue = (val / metricNotations[notation]).toFixed(1);
+    return formattedValue.endsWith('.0') ? formattedValue.slice(0, -2) + notation : formattedValue + notation;
+  }
+
+  return val.toString();
 }
 
 /**
@@ -150,7 +233,18 @@ function formatNumber(val) {
  * example: 'green' => '±0.5%'
  */
 function getTolerance(color) {
-  // write your code here & return value
+  const toleranceCodes = {
+    brown: '±1%',
+    red: '±2%',
+    green: '±0.5%',
+    blue: '±0.25%',
+    violet: '±0.1%',
+    grey: '±0.05%',
+    gold: '±5%',
+    silver: '±10%',
+  };
+
+  return toleranceCodes[color.toLowerCase()] || 'Unknown';
 }
 
 /**
@@ -182,7 +276,16 @@ function getTolerance(color) {
  * must use functions in this file to build the string using a template literal
  */
 function getResistorOhms(bands) {
-  // write your code here & return value
+  const value = getThreeBandValue({
+    color1: bands.color1,
+    color2: bands.color2,
+    multiplier: bands.multiplier,
+  });
+
+  const formattedValue = formatNumber(value);
+  const tolerance = getTolerance(bands.tolerance);
+
+  return `Resistor value: ${formattedValue} Ohms ${tolerance}`;
 }
 
 module.exports = {
